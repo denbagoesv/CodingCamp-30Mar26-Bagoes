@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense & Budget Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="inner">
+      <h1>💲 SpendTrack</h1>
+      <p>Expense & Budget Visualizer</p>
+    </div>
+    <button class="btn-theme" id="themeToggle" aria-label="Toggle dark/light mode">🌙</button>
+  </div>
+</header>
+
+<section class="balance-card" id="balanceCard" aria-label="Total spending summary">
+  <div class="balance-inner">
+    <div class="balance-total">
+      <div class="label">Total Spent</div>
+      <div class="amount" id="totalAmount">Rp 0</div>
+      <div class="meta" id="totalMeta">0 transactions</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-chip food">
+        <div class="stat-val" id="statFood">Rp 0</div>
+        <div class="stat-lbl">🍜 Food</div>
+      </div>
+      <div class="stat-chip transport">
+        <div class="stat-val" id="statTransport">Rp 0</div>
+        <div class="stat-lbl">🚗 Transport</div>
+      </div>
+      <div class="stat-chip fun">
+        <div class="stat-val" id="statFun">Rp 0</div>
+        <div class="stat-lbl">🎮 Fun</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="main">
+  <div class="grid">
+
+    <!-- LEFT COLUMN: form + limit + chart -->
+    <div class="col-left">
+
+      <section class="card">
+        <h2 class="section-title">Add Expense</h2>
+        <form id="txnForm" onsubmit="handleSubmit(event)">
+          <div class="input-group">
+            <label for="itemName">Item Name</label>
+            <input type="text" id="itemName" placeholder="e.g. Ngopi pagi" maxlength="60" />
+          </div>
+          <div class="row2">
+            <div class="input-group">
+              <label for="itemAmount">Amount (Rp)</label>
+              <input type="number" id="itemAmount" placeholder="0" min="0" />
+            </div>
+            <div class="input-group">
+              <label for="itemCategory">Category</label>
+              <select id="itemCategory">
+                <option value="food">🍜 Food</option>
+                <option value="transport">🚗 Transport</option>
+                <option value="fun">🎮 Fun</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-add">+ Add Transaction</button>
+        </form>
+      </section>
+
+      <section class="card" aria-label="Spending limit">
+        <h2 class="section-title">Spending Limit</h2>
+        <div class="limit-row">
+          <div class="input-group" style="margin:0; flex:1;">
+            <label for="limitInput">Alert me when total exceeds (Rp)</label>
+            <input type="number" id="limitInput" placeholder="e.g. 500000" min="0" />
+          </div>
+          <button class="btn-set-limit" onclick="setLimit()">Set</button>
+        </div>
+        <div class="limit-status" id="limitStatus"></div>
+      </section>
+
+      <section class="card" aria-label="Spending chart">
+        <h2 class="section-title">Spending Chart</h2>
+        <div class="chart-wrap">
+          <canvas id="pieChart" role="img" aria-label="Doughnut chart of spending by category"></canvas>
+          <div class="chart-center" aria-hidden="true">
+            <div class="cc-val" id="chartCenterVal">—</div>
+            <div class="cc-lbl">top category</div>
+          </div>
+        </div>
+        <div class="chart-legend" aria-hidden="true">
+          <div class="legend-item"><div class="legend-dot" style="background:#00d68f"></div>Food</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#4cc9f0"></div>Transport</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ffd166"></div>Fun</div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN: transactions -->
+    <div class="col-right">
+
+      <section aria-label="Transaction list">
+        <div class="txn-header">
+          <h2 class="section-title" style="margin-bottom:0">Transactions</h2>
+          <div class="txn-controls">
+            <label for="sortSelect" class="sr-only">Sort by</label>
+            <select id="sortSelect" class="sort-select" onchange="render()">
+              <option value="date">Latest</option>
+              <option value="amount-desc">Amount ↓</option>
+              <option value="amount-asc">Amount ↑</option>
+              <option value="category">Category</option>
+            </select>
+            <span class="txn-count" id="txnCount">0 items</span>
+          </div>
+        </div>
+        <div class="card txn-card">
+          <ul class="txn-list" id="txnList">
+            <li>
+              <div class="empty-state">
+                <div class="emoji" aria-hidden="true">🧾</div>
+                <p>No transactions yet.<br>Add one above to get started!</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
